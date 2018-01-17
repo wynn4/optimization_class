@@ -1,10 +1,10 @@
-function [xopt, fopt, exitflag, output] = optimize_template()
+function [xopt, fopt, exitflag, output] = spring_design()
 
     % ------------Starting point and bounds------------
     % design variables: d D n hf
-    x0 = [0.1, 0.5, 10.0, 1.5];   % starting point
-    ub = [0.25, 1.0, 50.0, 10.0];  % upper bound
-    lb = [0.05, 0.1, 1.0, 1.0];  % lower bound
+    x0 = [0.015, 0.5, 10.0, 1.5];   % starting point
+    ub = [0.2, 1.0, 50.0, 10.0];  % upper bound
+    lb = [0.01, 0.1, 1.0, 1.0];  % lower bound
 
     % ------------Linear constraints------------
     A = [];
@@ -43,13 +43,14 @@ function [xopt, fopt, exitflag, output] = optimize_template()
         % Tau = (8*F*D/pi*d^3)*K;
         hs = n*d;
         F_min = k*(hf - h0);
-        F_max = F_min + delta0*k;
+        % F_max = F_min + delta0*k;
+        F_max = k*(hf - (h0 - delta0));
         F_hs = k*(hf - hs);
-        Tau_min = (8*F_min*D/pi*d^3)*K;
-        Tau_max = (8*F_max*D/pi*d^3)*K;
+        Tau_min = 8*F_min*D*K/(pi*(d^3));
+        Tau_max = 8*F_max*D*K/(pi*(d^3));
         Tau_m = (Tau_max + Tau_min)/2;
         Tau_a = (Tau_max - Tau_min)/2;
-        Tau_hs = (8*F_hs*D/pi*d^3)*K;
+        Tau_hs = 8*F_hs*D*K/(pi*(d^3));
         Sy = 0.44*(Q/d^w);
         
         % objective function (what we're trying to optimize)
