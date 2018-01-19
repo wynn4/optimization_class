@@ -38,7 +38,7 @@ function [xopt, fopt, exitflag, output] = spring_design()
         
         % analysis functions
         k = G*d^4/(8*D^3*n);
-        F = k*delta_x;
+        F = k*delta_x
         K = ((4*D-d)/(4*(D-d)))+0.62*(d/D);
         % Tau = (8*F*D/pi*d^3)*K;
         hs = n*d;
