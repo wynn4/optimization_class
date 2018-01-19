@@ -3,6 +3,10 @@ function [xopt, fopt, exitflag, output] = spring_design()
     % ------------Starting point and bounds------------
     % design variables: d D n hf
     x0 = [0.015, 0.5, 10.0, 1.5];   % starting point
+%     x0 = [0.15, 1.0, 1, 7.0];   % starting point
+%     x0 = [0.08, 0.75, 3, 0.9];   % starting point
+%     x0 = [0.01, 0.2, 9, 5.0];   % starting point
+%     x0 = [0.2, 0.9, 4, 1.0];   % starting point
     ub = [0.2, 1.0, 50.0, 10.0];  % upper bound
     lb = [0.01, 0.1, 1.0, 1.0];  % lower bound
 
@@ -37,21 +41,21 @@ function [xopt, fopt, exitflag, output] = spring_design()
         delta_x = (hf - h0);  % maybe this instead???
         
         % analysis functions
-        k = G*d^4/(8*D^3*n);
+        k = G*d^4/(8*D^3*n)
         F = k*delta_x
-        K = ((4*D-d)/(4*(D-d)))+0.62*(d/D);
+        K = ((4*D-d)/(4*(D-d)))+0.62*(d/D)
         % Tau = (8*F*D/pi*d^3)*K;
-        hs = n*d;
+        hs = n*d
         F_min = k*(hf - h0);
         % F_max = F_min + delta0*k;
         F_max = k*(hf - (h0 - delta0));
         F_hs = k*(hf - hs);
         Tau_min = 8*F_min*D*K/(pi*(d^3));
         Tau_max = 8*F_max*D*K/(pi*(d^3));
-        Tau_m = (Tau_max + Tau_min)/2;
-        Tau_a = (Tau_max - Tau_min)/2;
-        Tau_hs = 8*F_hs*D*K/(pi*(d^3));
-        Sy = 0.44*(Q/d^w);
+        Tau_m = (Tau_max + Tau_min)/2
+        Tau_a = (Tau_max - Tau_min)/2
+        Tau_hs = 8*F_hs*D*K/(pi*(d^3))
+        Sy = 0.44*(Q/d^w)
         
         % objective function (what we're trying to optimize)
         f = -F;  % maximize Force
