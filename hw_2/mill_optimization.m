@@ -68,7 +68,7 @@ function [xopt, fopt, exitflag, output] = mill_optimization()
         grinder_hp = P_g/550
         pump_hp = P_f/550
         
-        V_c = ((40*g*c_slur*(S-1)*D)/(sqrt(C_d)))^0.5;
+        V_c = ((40*g*c_slur*(S-1)*D)/(sqrt(C_d)))^0.5
         
         % COST STUFF
         initial_cost = 300*(P_g/550) + 200*(P_f/550);

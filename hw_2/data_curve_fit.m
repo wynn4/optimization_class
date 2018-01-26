@@ -40,14 +40,15 @@ data = [240, 2.4;
     
     % 'A' matrix for 10th order polynomial
     A = [ones(length(x_data),1), x_data, x_data.^2, x_data.^3, x_data.^4,...
-        x_data.^5, x_data.^6, x_data.^7, x_data.^8, x_data.^9, x_data.^10];
+         x_data.^5, x_data.^6, x_data.^7, x_data.^8, x_data.^9, x_data.^10];
     
     % solve for coefficients of polynomial using pseudo-inverse
     x = A \ y_data;
     
     % visualize the curve fit of the data
-    t = min(x_data):0.01:max(x_data);
+    % t = min(x_data):(max(x_data) - min(x_data))/22:max(x_data);
     % t = 0:0.01:20;
+    t = x_data;
     
     y = x(1) + x(2)*t + x(3)*t.^2 + x(4)*t.^3 + x(5)*t.^4 + x(6)*t.^5 +...
         x(7)*t.^6 + x(8)*t.^7 + x(9)*t.^8 + x(10)*t.^9 + x(11)*t.^10;
@@ -58,6 +59,9 @@ data = [240, 2.4;
     ylabel('log(C_d)')
     title('log data plot')
     % looks pretty good
+    
+    % compute Mean Square Error
+    fit = ((norm(y - y_data))^2)/24
     
     
     

@@ -11,9 +11,9 @@ close all
 
 % limits for zoomed out view
 D_min = 0.1;
-D_max = 1.0;
-V_min = 0.5;
-V_max = 100;
+D_max = 0.6;
+V_min = 0.0;
+V_max = 25;
 
 % limits for zoomed in view
 % D_min = 0.1;
