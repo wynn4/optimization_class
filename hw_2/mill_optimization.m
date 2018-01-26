@@ -1,7 +1,7 @@
 function [xopt, fopt, exitflag, output] = mill_optimization()
 
     % ------------Starting point and bounds------------
-    % design variables: D V d
+    % design variables: x0 = [D, V, d]
     x0 = [0.3, 10.0, 0.001];   % starting point
     ub = [1.0, 1000, 0.01];  % upper bound
     lb = [0.1, 0.5, 0.0005];  % lower bound
@@ -39,11 +39,11 @@ function [xopt, fopt, exitflag, output] = mill_optimization()
         % analysis functions
         Q = 0.25*pi*(D^2)*V;  % flow rate of the slurry (volumetric)
         Q_l = W/gamma;  % flow rate of limestone (volumetric)
-        Q_w = Q - Q_l;
-        c_slur = Q_l/Q;
+        Q_w = Q - Q_l
+        c_slur = Q_l/Q
         % c_w = (c_slur*gamma)/((1-c_slur)*rho_w + c_slur*gamma);  % consentration of solid by weight in the slurry
         % rho = 1/(c_w/gamma + (1 - c_w)/rho_w);  % density of the slurry (lb_m/ft^3)
-        rho = rho_w + c_slur*(gamma - rho_w);
+        rho = rho_w + c_slur*(gamma - rho_w)
         
         P_g = 218*W*((1/sqrt(d)) - (1/sqrt(als)));  % power for grinding (ft-lbf/sec)
         
