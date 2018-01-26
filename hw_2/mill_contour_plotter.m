@@ -22,8 +22,8 @@ V_max = 100;
 % V_max = 100;
 
 
-D_res = 200;
-V_res = 200;
+D_res = 1000;
+V_res = 1000;
 
 % constants and analysis variables
 L = 15*5280;  % pipe length (ft)
@@ -77,8 +77,16 @@ for i = 1:rows
     end
 end
 
+fric = zeros(rows, cols);
 
-fric = f_w*((rho_w/rho)+150*c_slur*(rho_w/rho)*(g*D*(S-1)./((V.^2)*sqrt(C_d))).^1.5);
+for i = 1:rows
+    for j = 1:cols
+        fric(i,j) = f_w(i,j)*((rho_w/rho)+150*c_slur(i,j)*(rho_w/rho)*(g*D(i,j)*(S-1)/((V(i,j)^2)*sqrt(C_d)))^1.5);
+    end
+end
+
+
+% fric = f_w.*((rho_w/rho)+150*c_slur*(rho_w/rho)*(g.*D*(S-1)./((V.^2)*sqrt(C_d))).^1.5);
 delta_p = (fric*rho*L.*(V.^2))./(D*2*g_c);
 P_f = delta_p.*Q;
 
@@ -94,7 +102,7 @@ P = yearly_operating_cost*(((1 + ir)^n - 1)/(ir*(1 + ir)^n));
 cost = initial_cost + P;
 
 figure(1)
-[C,h] = contour(D,V,cost,200000:50000:600000,'k');
+[C,h] = contour(D,V,cost,200000:200000:1000000,'k');
 clabel(C,h,'Labelspacing',250);
 title('Limestone Mill Design Contour Plot');
 xlabel('pipe diameter, D (ft)');

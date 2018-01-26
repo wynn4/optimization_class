@@ -57,7 +57,7 @@ function [xopt, fopt, exitflag, output] = mill_optimization()
         Cd_Rp_term = 4*g*rho_w*(d^3)*((gamma - rho_w)/(3*(mu^2)));
         C_d = cd_lookup(Cd_Rp_term);
         
-        fric = f_w*((rho_w/rho)+150*c_slur*(rho_w/rho)*(g*D*(S-1)/((V^2)*sqrt(C_d)))^1.5);
+        fric = f_w*((rho_w/rho)+150*c_slur*(rho_w/rho)*(g*D*(S-1)/((V^2)*sqrt(C_d)))^1.5)
         
         delta_p = (fric*rho*L*(V^2))/(D*2*g_c);
         
@@ -80,6 +80,10 @@ function [xopt, fopt, exitflag, output] = mill_optimization()
         P = yearly_operating_cost*(((1 + ir)^n - 1)/(ir*(1 + ir)^n));
         
         total_cost = initial_cost + P
+        
+        diam_const = D - 0.5
+        vel_const = -V + 1.1*V_c
+        cos_const = c_slur - 0.4
         
         % objective function (what we're trying to optimize)
         f = total_cost;  % minimize total cost
