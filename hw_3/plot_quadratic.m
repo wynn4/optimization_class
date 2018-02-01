@@ -25,7 +25,9 @@ f = 12 + 6*X1 - 5*X2 + 4*X1.^2 -2*X1.*X2 + 6*X2.^2;
 % create the contour plot
 figure(1)
 [C,h] = contour(X1,X2,f,0:10:100,'k');
+hold on
 clabel(C,h,'Labelspacing',250);
 title('Quadratic Contour Plot');
 xlabel('X1');
 ylabel('X2');
+plot(-0.6745, 0.3023, '*r')
