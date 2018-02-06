@@ -34,15 +34,15 @@ end
 alpha = alpha0;
 num_iterations = 0;
 max_iterations = 1e4;
+plot_func = 1;
+max_data_rows = 100;
 
+if plot_func == 1
+    % initialize array to store x_values
+    x_vals = zeros(max_data_rows,2);
+    x_vals(1,:) = x0';
+end
 
-% if n < 2 || n > 3
-%     disp('Function Error: Number of variables must be either 2 or 3')
-%     xopt = [];
-%     fopt = [];
-%     exitflag = 1;
-%     return
-% end
 
 %% Steepest Descent
 if algoflag == 1  % steepest descent
@@ -140,6 +140,11 @@ if algoflag == 1  % steepest descent
             
             % increment the iteration count
             num_iterations = num_iterations + 1;
+            
+            % store data if we're going to plot
+            if plot_func == 1 && num_iterations < max_data_rows
+                x_vals(num_iterations + 1,:) = x';
+            end
             
             % check to see if the gradient is close enough to zero
             % i.e. we're at the optimum.
@@ -260,6 +265,11 @@ if algoflag == 2  % conjugate gradient
             
             % increment the iteration count
             num_iterations = num_iterations + 1;
+            
+            % store data if we're going to plot
+            if plot_func == 1 && num_iterations < max_data_rows
+                x_vals(num_iterations + 1,:) = x';
+            end
             
             % check to see if the gradient is close enough to zero
             % i.e. we're at the optimum.
@@ -390,6 +400,11 @@ if algoflag == 3  % bfgs quasi-Newton
             % increment the iteration count
             num_iterations = num_iterations + 1;
             
+            % store data if we're going to plot
+            if plot_func == 1 && num_iterations < max_data_rows
+                x_vals(num_iterations + 1,:) = x';
+            end
+            
             % check to see if the gradient is close enough to zero
             % i.e. we're at the optimum.
             if norm(grad) < stoptol
@@ -411,6 +426,11 @@ if num_iterations >= max_iterations
     max_iter_str = num2str(max_iterations);
     err_str = strcat('Failed to converge to an optimum after ', max_iter_str, ' iterations.');
     disp([newline, err_str])
+    return;
+end
+
+if plot_func == 1
+    plot_rosenbrock(algoflag, num_iterations, x_vals)
 end
 
 
