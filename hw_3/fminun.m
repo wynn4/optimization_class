@@ -8,8 +8,9 @@ grad = gradobj(x0);
 x = x0;
 
 %set starting step length
-alpha0 = 0.5;
+alpha0 = 0.005;
 
+% set the initial search direction
 if (algoflag == 1)     % steepest descent
     s = srchsd(grad, 1);
 elseif (algoflag == 2)    % conjugate gradient
@@ -24,7 +25,7 @@ end
 % initialize variables
 alpha = alpha0;
 num_iterations = 0;
-max_iterations = 1e3;
+max_iterations = 1e4;
 
 
 % if n < 2 || n > 3
@@ -111,7 +112,7 @@ if algoflag == 1  % steepest descent
                 
             else
                 % this case shouldn't happen
-                disp('Unexpected case: idx containing minimum value = 3')
+                % disp('Unexpected case: idx containing minimum value = 3')
             end
             
             % find the 'optimal' alpha using a quadratic line search
@@ -223,7 +224,7 @@ if algoflag == 2  % conjugate gradient
                 
             else
                 % this case shouldn't happen
-                disp('Unexpected case: idx containing minimum value = 3')
+                % disp('Unexpected case: idx containing minimum value = 3')
             end
             
             % find the 'optimal' alpha using a quadratic line search
@@ -264,6 +265,12 @@ if algoflag == 2  % conjugate gradient
         end
         
         
+    end
+end
+
+%% BFGS quasi-Newton
+if algoflag == 3  % bfgs quasi-Newton
+    while num_iterations < max_iterations
     end
 end
 
