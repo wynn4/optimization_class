@@ -149,7 +149,6 @@ end
 
 %% Conjugate Gradient
 if algoflag == 2  % conjugate gradient
-    first_time = 1;
     while num_iterations < max_iterations
         
         % start going along the function in the direction of s
@@ -231,37 +230,16 @@ if algoflag == 2  % conjugate gradient
             a_star = qline_search(a1, f1, a2, f2, a3, f3);
             
             % set a new 'x' value using a_star and the current search dir
+            x_plus = x + a_star*s;
             
-            % if this is is the first step (aka we got here via steepest descent)
-            if first_time == 1
-                first_time = 0;
-                
-                x_plus = x + a_star*s;
-                
-                % evaluate the gradient at this new 'xplus' location
-                grad_plus = gradobj(x_plus);
-                
-                % compute beta
-                beta = (grad_plus'*grad_plus)/(grad'*grad);
-                
-                % our previous search dir
-                s = srchsd(grad, 0);  % don't normalize this time
-                
-                % find our new conjugate gradient search direction to go in
-                s_plus = -grad_plus + beta * s;
-            else
-                x_plus = x + a_star*s;
-                
-                % evaluate the gradient at this new 'xplus' location
-                grad_plus = gradobj(x_plus);
-                
-                % compute beta
-                beta = (grad_plus'*grad_plus)/(grad'*grad);
-                
-                % find our new conjugate gradient search direction to go in
-                s_plus = -grad_plus + beta * s;
-                
-            end
+            % evaluate the gradient at this new 'xplus' location
+            grad_plus = gradobj(x_plus);
+            
+            % compute beta
+            beta = (grad_plus'*grad_plus)/(grad'*grad);
+            
+            % find our new conjugate gradient search direction to go in
+            s_plus = -grad_plus + beta * s;
             
             % reset alpha down to a small number
             alpha = alpha0;
