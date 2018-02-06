@@ -11,9 +11,9 @@ x = x0;
 alpha0 = 0.5;
 
 if (algoflag == 1)     % steepest descent
-    s = srchsd(grad);
+    s = srchsd(grad, 1);
 elseif (algoflag == 2)    % conjugate gradient
-    s = srchsd(grad);
+    s = srchsd(grad, 0);  % don't normalize search dir.
 elseif (algoflag == 3)
     s = 10;    % BFGS Quasi-Newton
 else
@@ -111,7 +111,7 @@ if algoflag == 1  % steepest descent
                 
             else
                 % this case shouldn't happen
-                disp('Theres an Error in your thinking')
+                disp('Unexpected case: idx containing minimum value = 3')
             end
             
             % find the 'optimal' alpha using a quadratic line search
@@ -124,7 +124,7 @@ if algoflag == 1  % steepest descent
             grad = gradobj(x);
             
             % find our new search direction to start going in
-            s = srchsd(grad);
+            s = srchsd(grad, 1);
             
             % reset alpha down to a small number
             alpha = alpha0;
@@ -149,6 +149,7 @@ end
 
 %% Conjugate Gradient
 if algoflag == 2  % conjugate gradient
+    first_time = 1;
     while num_iterations < max_iterations
         
         % start going along the function in the direction of s
@@ -223,23 +224,52 @@ if algoflag == 2  % conjugate gradient
                 
             else
                 % this case shouldn't happen
-                disp('Theres an Error in your thinking')
+                disp('Unexpected case: idx containing minimum value = 3')
             end
             
             % find the 'optimal' alpha using a quadratic line search
             a_star = qline_search(a1, f1, a2, f2, a3, f3);
             
             % set a new 'x' value using a_star and the current search dir
-            x = x + a_star*s;
             
-            % evaluate the gradient at this new 'x' location
-            grad = gradobj(x);
-            
-            % find our new search direction to start going in
-            s = srchsd(grad);
+            % if this is is the first step (aka we got here via steepest descent)
+            if first_time == 1
+                first_time = 0;
+                
+                x_plus = x + a_star*s;
+                
+                % evaluate the gradient at this new 'xplus' location
+                grad_plus = gradobj(x_plus);
+                
+                % compute beta
+                beta = (grad_plus'*grad_plus)/(grad'*grad);
+                
+                % our previous search dir
+                s = srchsd(grad, 0);  % don't normalize this time
+                
+                % find our new conjugate gradient search direction to go in
+                s_plus = -grad_plus + beta * s;
+            else
+                x_plus = x + a_star*s;
+                
+                % evaluate the gradient at this new 'xplus' location
+                grad_plus = gradobj(x_plus);
+                
+                % compute beta
+                beta = (grad_plus'*grad_plus)/(grad'*grad);
+                
+                % find our new conjugate gradient search direction to go in
+                s_plus = -grad_plus + beta * s;
+                
+            end
             
             % reset alpha down to a small number
             alpha = alpha0;
+            
+            % re-assign variable names for the next loop
+            x = x_plus;
+            s = s_plus;
+            grad = grad_plus;
             
             % increment the iteration count
             num_iterations = num_iterations + 1;
@@ -279,9 +309,13 @@ exitflag = 0;
 end
 
 % get steepest descent search direction as a column vector
-function [s] = srchsd(grad)
-mag = sqrt(grad'*grad);
-s = -grad/mag;
+function [s] = srchsd(grad, normalized)
+if normalized == 1
+    mag = sqrt(grad'*grad);
+    s = -grad/mag;
+else
+    s = -grad;
+end
 end
 
 % quadratic line search
