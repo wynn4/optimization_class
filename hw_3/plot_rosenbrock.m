@@ -47,7 +47,7 @@ xlabel('X1');
 ylabel('X2');
 plot(1, 1, '*r', 'MarkerSize', 20, 'LineWidth', 2)
 plot(data(:,1), data(:,2), 'm', 'LineWidth', 2)
-legend('f (Rosenbrocks)','optimum', method_str)
+legend('f (Rosenbrocks)','optimum', method_str, 'Location', 'southeast')
 
 
 

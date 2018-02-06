@@ -34,7 +34,7 @@ end
 alpha = alpha0;
 num_iterations = 0;
 max_iterations = 1e4;
-plot_func = 1;
+plot_func = 0;
 max_data_rows = 100;
 
 if plot_func == 1
@@ -128,6 +128,8 @@ if algoflag == 1  % steepest descent
             
             % set a new 'x' value using a_star and the current search dir
             x = x + a_star*s;
+            
+            % sl = norm(a_star*s);
             
             % evaluate the gradient at this new 'x' location
             grad = gradobj(x);
@@ -245,6 +247,8 @@ if algoflag == 2  % conjugate gradient
             
             % set a new 'x' value using a_star and the current search dir
             x_plus = x + a_star*s;
+            
+            % sl = norm(a_star*s);
             
             % evaluate the gradient at this new 'xplus' location
             grad_plus = gradobj(x_plus);
@@ -371,6 +375,8 @@ if algoflag == 3  % bfgs quasi-Newton
             % set a new 'x' value using a_star and the current search dir
             x_plus = x + a_star*s;
             
+            % sl = norm(a_star*s);
+            
             % evaluate the gradient at this new 'xplus' location
             grad_plus = gradobj(x_plus);
             
@@ -418,6 +424,7 @@ if algoflag == 3  % bfgs quasi-Newton
     end
 end
 
+%% function exit
 %%%%%%%%%%%%%%%%%
 % function exit %
 %%%%%%%%%%%%%%%%%
