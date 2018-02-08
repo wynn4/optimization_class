@@ -33,7 +33,7 @@ end
 % initialize variables
 alpha = alpha0;
 num_iterations = 0;
-max_iterations = 1e4;
+max_iterations = 500;
 plot_func = 0;
 max_data_rows = 100;
 
@@ -431,9 +431,11 @@ end
 
 if num_iterations >= max_iterations
     max_iter_str = num2str(max_iterations);
-    err_str = strcat('Failed to converge to an optimum after ', max_iter_str, ' iterations.');
+    err_str = strcat('Failed to converge to an optimum after ', {' '}, max_iter_str, ' iterations.');
     disp([newline, err_str])
-    return;
+    exitflag = 1;
+else
+    exitflag = 0;
 end
 
 if plot_func == 1
@@ -445,7 +447,6 @@ end
 num_iterations
 xopt = x;
 fopt = obj(x);
-exitflag = 0;
 
 end
 
