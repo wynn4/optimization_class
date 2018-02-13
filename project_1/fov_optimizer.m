@@ -2,7 +2,7 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
 
     % ------------Starting point and bounds------------
     % design variables: height, focal length, sensor size, target size
-    x0 = [10, 0.005, 720, 0.5];  % starting point
+    x0 = [1.1, 0.0015, 301, 0.26];  % starting point
     ub = [100, 0.015, 2000, 5.0];  % upper bound
     lb = [1, 0.001, 300, 0.25];  % lower bound
 
@@ -46,7 +46,7 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
         % rate at which images can be processed is directly proportional to
         % the area (in pixels) of the sensor
         tpp = 8.0539e-8;  % time it takes to process each pixel (found from experimentation)
-        t_proc = tpp *  ss_pix^2;  % time to process the image
+        t_proc = tpp * ss_pix^2;  % time to process the image
         rate_proc = 1/t_proc;  % rate at which images can be processed
         
         
@@ -60,13 +60,14 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
         f = -fov;  % maximize Field-of-view (m^2)
         
         % inequality constraints (c<=0)
-        c = zeros(6,1);
+        c = zeros(7,1);
         c(1) = fl - 0.025;  % focal length <= 25 mm
         c(2) = -fl + 0.0012;  % focal length >= 1.2 mm
         c(3) = -rate_proc + 10;  % image processing rate >= 10 hz
         c(4) = ts - 1.5;  % target size (width) <= 1.5 meters
         c(5) = -ts + 0.3;  % target size (width) >= 0.3 meters
         c(6) = -target_area_pix + F_safe * min_target_pixels;  % target's area in pixels >= safety_factor * 800
+        c(7) = h - 30;  % height <= 30 meters
         
         % equality constraints (ceq=0)
         ceq = [];  % empty when we have none
@@ -75,7 +76,7 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
 
     % ------------Call fmincon------------
     options = optimoptions(@fmincon, 'display', 'iter-detailed');
-    options.StepTolerance = 1e-12;
+    options.StepTolerance = 1e-20;
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
     
     
