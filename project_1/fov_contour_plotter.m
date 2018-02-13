@@ -21,13 +21,18 @@ h_max = 30.0;
 res = 100;
 
 fov = zeros(res+1);
+target_area_pix = zeros(res+1);
 
 % constants
 ss_physical = 1/3;
+F_safe = 2;
+min_target_pixels = 800;
 
 % optimums for the variables (from optimization)
 ss_pix = 1114.286537365992;  % optimal pixel size
 ts = 1.499999999828;  % optimal target size
+h_opt = 18.480620537231;
+fl_opt = 0.002647803799;
 
 % design variables at mesh points
 [fl,height] = meshgrid(fl_min:(fl_max - fl_min)/res:fl_max, h_min:(h_max - h_min)/res:h_max);
@@ -41,6 +46,11 @@ for i=1:length(fl)
         fov_w = 2 * (height(i,j) * tan(v/2));  % width of rectangular region camera can see
         fov_h = fov_w;  % height of rectangular region camera can see
         fov(i,j) = fov_w * fov_h;  % area in square meters that camera can see
+        
+        u_target = (fl(i,j)/height(i,j)) * (ts/2);  % projection of the target onto the image plane (meters)
+        v_target = u_target;  % same as above since target is square (meters)
+        pix_size = ss_w/ss_pix;  % pixel size (meters)
+        target_area_pix(i,j) = (2 * u_target/pix_size) * (2 * v_target/pix_size);  % area of target in pixels
     end
 end
 
@@ -56,7 +66,7 @@ hold on;
 % solid lines to show constraint boundaries
 contour(fl,height,(fl - 0.025),[0.0,0.0],'g-','LineWidth',2);
 contour(fl,height,(-fl + 0.0012),[0.0,0.0],'b-','LineWidth',2);
-% contour(d,D,(Tau_a - Se/Sf),[0.0,0.0],'r-','LineWidth',2);
+contour(fl,height,(-target_area_pix + F_safe * min_target_pixels),[0.0,0.0],'r-','LineWidth',2);
 % contour(d,D,(Tau_a + Tau_m - Sy./Sf),[0.0,0.0],'b-','LineWidth',2);
 % contour(d,D,(D./d),[16.0,16.0],'m-','LineWidth',2);
 % contour(d,D,(D./d),[4.0,4.0],'c-','LineWidth',2);
@@ -64,7 +74,7 @@ contour(fl,height,(-fl + 0.0012),[0.0,0.0],'b-','LineWidth',2);
 % contour(d,D,(d),[0.01,0.01],'-','color',[0.7, 0.1, 0.9],'LineWidth', 2)
 % contour(d,D,(D+d),[0.75,0.75],'-','color',[0.0, 0.44, 0.14],'LineWidth', 2)
 % contour(d,D,(-hdef+hs+0.05),[0.0,0.0],'-','color',[0.04, 0.32, 0.54],'LineWidth', 2)
-% plot(d_opt,D_opt,'r*','MarkerSize',12,'LineWidth',1)
+plot(fl_opt,h_opt,'r*','MarkerSize',12,'LineWidth',1)
 % % show a legend
 % legend('force','T hs-Sy<0','Ta-Se/Sf<0','Ta+Tm-Sy/Sf<0','D/d<16', ...
 %        'D/d>4','d<0.2','d>0.01','D+d<0.75','-hdef+hs+0.05<0','optimal')
