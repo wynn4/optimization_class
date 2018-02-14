@@ -3,6 +3,7 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
     % ------------Starting point and bounds------------
     % design variables: height, focal length, sensor size, target size
     x0 = [1.1, 0.0015, 301, 0.26];  % starting point
+    x0 = [10, 0.003, 1450, 0.8];  % starting point
     ub = [100, 0.015, 2000, 5.0];  % upper bound
     lb = [1, 0.001, 300, 0.25];  % lower bound
 
@@ -53,6 +54,7 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
         
         % what we're optimizing
         fov = fov_w * fov_h  % area in square meters that camera can see
+        % fov_targets = fov/(ts^2)
         
         
         
@@ -62,10 +64,12 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
         % inequality constraints (c<=0)
         c = zeros(7,1);
         c(1) = fl - 0.025;  % focal length <= 25 mm
-        c(2) = -fl + 0.0012;  % focal length >= 1.2 mm
+        c(2) = -fl + 0.002;  % focal length >= 3 mm
+        %c(1) = fl - 0.008;  % focal length <= 25 mm
+        %c(2) = -fl + 0.004;  % focal length >= 1.2 mm
         c(3) = -rate_proc + 10;  % image processing rate >= 10 hz
         c(4) = ts - 1.5;  % target size (width) <= 1.5 meters
-        c(5) = -ts + 0.3;  % target size (width) >= 0.3 meters
+        c(5) = -ts + 0.5;  % target size (width) >= 0.3 meters
         c(6) = -target_area_pix + F_safe * min_target_pixels;  % target's area in pixels >= safety_factor * 800
         c(7) = h - 30;  % height <= 30 meters
         
@@ -77,6 +81,7 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
     % ------------Call fmincon------------
     options = optimoptions(@fmincon, 'display', 'iter-detailed');
     options.StepTolerance = 1e-20;
+    options.MaxFunctionEvaluations = 60000;
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
     
     
