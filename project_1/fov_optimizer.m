@@ -2,8 +2,7 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
 
     % ------------Starting point and bounds------------
     % design variables: height, focal length, sensor size, target size
-    x0 = [1.1, 0.0015, 301, 0.26];  % starting point
-    x0 = [10, 0.003, 1450, 0.8];  % starting point
+    x0 = [14, 0.006, 1260, 0.707];  % starting point
     ub = [100, 0.015, 2000, 5.0];  % upper bound
     lb = [1, 0.001, 300, 0.25];  % lower bound
 
@@ -36,7 +35,14 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
         ss_w = ss_physical * sqrt(2)/2;  % physical sensor width (inches)
         ss_w = ss_w * 0.0254;  % convert sensor width to meters
         v = 2 * atan(ss_w/(2*fl));  % angular field of view of the camera
-        fov_w = 2 * (h * tan(v/2));  % width of rectangular region camera can see
+        
+        % here we don't let tan(x) blow up to infinity
+        if (v/2) < 0.99*pi/2
+            fov_w = 2 * (h * tan(v/2));  % width of rectangular region camera can see
+        else
+            fov_w = 2 * (h * tan(0.99*v/2));
+        end
+        
         fov_h = fov_w;  % height of rectangular region camera can see
         
         u_target = (fl/h) * (ts/2);  % projection of the target onto the image plane (meters)
@@ -51,11 +57,8 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
         rate_proc = 1/t_proc;  % rate at which images can be processed
         
         
-        
         % what we're optimizing
         fov = fov_w * fov_h  % area in square meters that camera can see
-        % fov_targets = fov/(ts^2)
-        
         
         
         % objective function (what we're trying to optimize)
@@ -63,10 +66,8 @@ function [xopt, fopt, exitflag, output] = fov_optimizer()
         
         % inequality constraints (c<=0)
         c = zeros(7,1);
-        c(1) = fl - 0.025;  % focal length <= 25 mm
-        c(2) = -fl + 0.002;  % focal length >= 3 mm
-        %c(1) = fl - 0.008;  % focal length <= 25 mm
-        %c(2) = -fl + 0.004;  % focal length >= 1.2 mm
+        c(1) = (fl - 0.025)*1;  % focal length <= 25 mm
+        c(2) = (-fl + 0.002)*1;  % focal length >= 2 mm
         c(3) = -rate_proc + 10;  % image processing rate >= 10 hz
         c(4) = ts - 1.5;  % target size (width) <= 1.5 meters
         c(5) = -ts + 0.5;  % target size (width) >= 0.3 meters
