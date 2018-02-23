@@ -16,7 +16,9 @@
     % ------------Call fmincon------------
     tic;
     options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on');
-    [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);  
+    options = optimoptions(options, 'SpecifyObjectiveGradient', true, 'SpecifyConstraintGradient', true,...
+        'FiniteDifferenceType', 'central', 'CheckGradients', false);
+    [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
     eltime = toc;
     eltime
     xopt    %design variables at the minimum
@@ -56,9 +58,57 @@
     end
 
     % ------------Separate obj/con (do not change)------------
-    function [f] = obj(x) 
+    function [f, gradf] = obj(x) 
         [f, ~, ~] = objcon(x);
+        
+        % compute forward difference objective derivatives
+        
+        delta_x = 1e-4;                    % set the step size
+        gradf = zeros(length(x),1);        % initialize gradient vector
+        
+        % perturb each element of x and compute the partial derivatives
+        for i = 1:length(x)
+            x_p = x;                       % reset x_p                    
+            x_p(i) = x_p(i) + delta_x;     % perturb x_p
+            [f_p, ~, ~] = objcon(x_p);     % compute objective at perturbed x
+            gradf(i) = (f_p - f)/delta_x;  % compute forward diff derivative
+        end
     end
-    function [c, ceq] = con(x) 
+    
+    function [c, ceq, DC, DCeq] = con(x) 
         [~, c, ceq] = objcon(x);
+        
+        % compute forward difference constraint derivatives
+        
+        delta_x = 1e-4;                    % set the step size
+        DC = zeros(length(x));             % initialize gradient vector
+        
+        % perturb each element of x and compute the partial derivatives
+        for i = 1:length(x)
+            x_p = x;                       % reset x_p                    
+            x_p(i) = x_p(i) + delta_x;     % perturb x_p
+            [~, c_p, ~] = objcon(x_p);     % compute constraint at perturbed x
+            DC(i,:) = (c_p - c)/delta_x;   % compute forward diff derivative
+            DCeq = [];
+        end
     end
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
