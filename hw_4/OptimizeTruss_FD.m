@@ -19,6 +19,11 @@
     options = optimoptions(options, 'SpecifyObjectiveGradient', true, 'SpecifyConstraintGradient', true,...
         'FiniteDifferenceType', 'central', 'CheckGradients', false);
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
+    
+%     options = optimoptions(options, 'MaxFunctionEvaluations', 1);
+%     [xopt, fopt, exitflag, output, lambda, grad, hessian] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
+    
+    
     eltime = toc;
     eltime
     xopt    %design variables at the minimum
@@ -73,6 +78,8 @@
             [f_p, ~, ~] = objcon(x_p);     % compute objective at perturbed x
             gradf(i) = (f_p - f)/delta_x;  % compute forward diff derivative
         end
+        
+        % myobjgrad = gradf
     end
     
     function [c, ceq, DC, DCeq] = con(x) 
@@ -91,12 +98,41 @@
             DC(i,:) = (c_p - c)/delta_x;   % compute forward diff derivative
             DCeq = [];
         end
+        
+        % mycongrad = DC
     end
     
     
     
-    
-    
+  % gradients after first evaluation  
+  
+  % from fmincon's gradient solver
+%   grad =
+% 
+%   36.000000000378563
+%   36.000000000378563
+%   36.000000000378563
+%   36.000000000378563
+%   36.000000000378563
+%   36.000000000378563
+%   50.911688244951051
+%   50.911688244951051
+%   50.911688244951051
+%   50.911688244951051
+
+  % from the gradient I computed
+%   myobjgrad =
+% 
+%   36.000000000058208
+%   36.000000000058208
+%   36.000000000058208
+%   36.000000000058208
+%   36.000000000058208
+%   36.000000000058208
+%   50.911688244923425
+%   50.911688244923425
+%   50.911688244923425
+%   50.911688244923425    
     
     
     
