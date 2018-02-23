@@ -16,6 +16,9 @@
     % ------------Call fmincon------------
     tic;
     options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on');
+    options = optimoptions(options, 'SpecifyObjectiveGradient', true, 'SpecifyConstraintGradient', true,...
+        'FiniteDifferenceType', 'central', 'CheckGradients', true);
+    
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);  
     eltime = toc;
     eltime
@@ -61,9 +64,48 @@
     end
 
     % ------------Separate obj/con (do not change)------------
-    function [f] = obj(x) 
+    function [f, gradf] = obj(x) 
         [f, ~, ~] = objcon(x);
+        
+        % compute the partial objective derivatives via complex step
+        
+        delta_x = 1e-4;                    % set the step size
+        gradf = zeros(length(x),1);        % initialize gradient vector
+        for it = 1:length(x)
+            x_p = x;
+            x_p(it) = x_p(it) + delta_x*i;
+            [f_p, ~, ~] = objcon(x_p);
+            gradf(it) = imag(f_p)/delta_x;
+        end
     end
-    function [c, ceq] = con(x) 
+    function [c, ceq, DC, DCeq] = con(x) 
         [~, c, ceq] = objcon(x);
+        
+        % compute the partial constraint derivatives via complex step
+        
+        delta_x = 1e-4;                    % set the step size
+        DC = zeros(length(c),length(x));        % initialize gradient vector
+        for it = 1:length(x)
+            x_p = x;
+            x_p(it) = x_p(it) + delta_x*i;
+            [~, c_p, ~] = objcon(x_p);
+            DC(:, it) = imag(c_p)/delta_x;
+        end
+        DC = DC';
+        DCeq = [];
     end
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
