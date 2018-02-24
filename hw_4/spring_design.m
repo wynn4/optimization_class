@@ -37,7 +37,7 @@ Se = 45e3;
 Sf = 1.5;
 
 % delta_x = 0.4;  % not sure if this is right??
-delta_x = (hf - h0);  % maybe this instead???
+delta_x = (hf - h0);  % maybe this insteadc = zeros(9,1);???
 
 % analysis functions
 k = G*d^4/(8*D^3*n);
