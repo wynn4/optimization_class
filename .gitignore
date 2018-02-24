@@ -30,3 +30,6 @@ html/
 # zip folders
 *.zip
 *.tar
+
+# libre .~lock files
+.~lock*
