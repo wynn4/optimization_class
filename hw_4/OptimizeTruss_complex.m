@@ -53,8 +53,8 @@
 %         end
         % 20 separate constraints
         for i=1:10
-            c(2*i-1) = stress(i) - 25000;
-            c(2*i) = -stress(i) - 25000;
+            c(2*i-1) = (stress(i) - 25000)/1000;  % add constraints and divide by 1000 to provide scaling
+            c(2*i) = (-stress(i) - 25000)/1000;
         end
         
         %equality constraints (ceq=0)

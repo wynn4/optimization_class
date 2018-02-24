@@ -51,9 +51,14 @@
         f = weight; %minimize weight
         
         %inequality constraints (c<=0)
-        c = zeros(10,1);         % create column vector
+        % c = zeros(10,1);         % create column vector
+        % for i=1:10
+            % c(i) = (abs(stress(i))-25000)/1000; % check stress both pos and neg (scale by dividing constraint by 1000        
+        % end
+        c = zeros(20,1);
         for i=1:10
-            c(i) = abs(stress(i))-25000; % check stress both pos and neg         
+            c(2*i-1) = (stress(i) - 25000)/1000;  % add constraints and divide by 1000 to provide scaling
+            c(2*i) = (-stress(i) - 25000)/1000;
         end
         
         %equality constraints (ceq=0)
@@ -88,17 +93,17 @@
         % compute forward difference constraint derivatives
         
         delta_x = 1e-4;                    % set the step size
-        DC = zeros(length(x));             % initialize gradient vector
+        DC = zeros(length(c),length(x));             % initialize gradient vector
         
         % perturb each element of x and compute the partial derivatives
         for i = 1:length(x)
             x_p = x;                       % reset x_p                    
             x_p(i) = x_p(i) + delta_x;     % perturb x_p
             [~, c_p, ~] = objcon(x_p);     % compute constraint at perturbed x
-            DC(i,:) = (c_p - c)/delta_x;   % compute forward diff derivative
+            DC(:,i) = (c_p - c)/delta_x;   % compute forward diff derivative
             DCeq = [];
         end
-        
+        DC = DC';
         % mycongrad = DC
     end
     
