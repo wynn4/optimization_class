@@ -2,8 +2,6 @@ clc
 clear
 close all
 
-% starting values for spring design variables
-% x = [0.072436793444465, 0.677563177950227, 7.592825998929158, 1.369115239822411];
 x = [0.015, 0.5, 10.0, 1.5];
 
 [function_values, function_jacobians, constraint_values, constraint_jacobians] = objcon(x);
@@ -58,7 +56,7 @@ Sy = 0.44*(Q/d^w);
 
 function_vals = [k.val, F.val, K.val, hs.val, F_min.val, F_max.val, ...
                  F_hs.val, Tau_min.val, Tau_max.val, Tau_m.val, Tau_a.val, ...
-                 Tau_hs.val, Sy.val];
+                 Tau_hs.val, Sy.val]';
 function_jacobians = [k.der; F.der; K.der; hs.der; F_min.der; F_max.der; ...
                       F_hs.der; Tau_min.der; Tau_max.der; Tau_m.der; Tau_a.der; ...
                       Tau_hs.der; Sy.der];
@@ -78,13 +76,10 @@ c8 = D + d - 0.75;
 c9 = -hdef + hs + 0.05;
 
 constraint_vals = [c1.val, c2.val, c3.val, c4.val, c5.val,...
-                   c6.val, c7.val, c8.val, c9.val];
+                   c6.val, c7.val, c8.val, c9.val]';
 
 constraint_jacobians = [c1.der; c2.der; c3.der; c4.der; c5.der;...
                         c6.der; c7.der; c8.der; c9.der];
-
-% % equality constraints (ceq=0)
-% ceq = [];  % empty when we have none
 
 end
 
