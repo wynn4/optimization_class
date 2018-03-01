@@ -5,7 +5,7 @@ clear;
 h = 0.0001;
 
 x = 3;
-dfdx = 2.5*(x^1.5) + log(x)
+dfdx = 2.5*(x^1.5) + log(x);
 
 % compute forward difference
 x_p = x + h;

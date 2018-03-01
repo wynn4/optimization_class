@@ -2,7 +2,6 @@ clc
 clear
 close all
 
-
 x0 = [3, 2]';
 
 N = eye(2);
@@ -44,16 +43,33 @@ gamma = [get_grad(x1) - get_grad(x0)];
 dx = x1 - x0;
 
 % BFGS update
-N1 = N + (1 + (gamma'*N*gamma)/(dx'*gamma))*((dx*dx')/(dx'*gamma)) - (((dx*gamma'*N) + (N*gamma*dx'))/(dx'*gamma));
+N1 = N + (1 + (gamma'*N*gamma)/(dx'*gamma))*((dx*dx')/(dx'*gamma)) - (((dx*gamma'*N) + (N*gamma*dx'))/(dx'*gamma))
 
 
 % new search dir
-s1 = N1*gamma
+grad = get_grad(x1);  % first get the gradient
+s1 = -N1*grad
 
-x2 = x1 + -s1
+alpha = alpha0;
+% get astar by brute force
+fprev = get_f(x1);
+while 1
+    alpha = alpha + step_size;
+    fnext = get_f(x1 + alpha*s);
+    
+    if fnext > fprev
+        astar = alpha - step_size;
+        break
+    end
+    
+    fprev = fnext;
+    
+end
 
-func = get_f(x1)
-func = get_f(x2)
+% x2 = x1 + -s1;
+% 
+% func = get_f(x1);
+% func = get_f(x2);
 
 
 
