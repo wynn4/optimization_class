@@ -21,7 +21,7 @@ f = 2 + 0.2*(X1.^2) + 0.2*(X2.^2) - cos(pi.*X1) - cos(pi.*X2);
 
 
 % create the contour plot
-figure(2), clf
+figure(3), clf
 [C,h] = contour(X1,X2,f,0:1:12,'k');
 hold on
 clabel(C,h,'Labelspacing',250);
@@ -29,13 +29,14 @@ title('Simulated Annealing Contour Plot Path');
 xlabel('X1');
 ylabel('X2');
 plot(0, 0, '*r')
-plot(x_states(:,1), x_states(:,2))
+plot(x_states(:,1), x_states(:,2), 'LineWidth', 2)
 
-% create a 2D plot
-x12d = -5:0.01:5;
-f2d = 2 + 0.2*(x12d.^2) + 0.2*(0^2) - cos(pi.*x12d) - cos(pi*0);
-
-figure(3), clf
-plot(x12d, f2d)
-
+% % create a 2D plot
+% x12d = -5:0.01:5;
+% f2d = 2 + 0.2*(x12d.^2) + 0.2*(0^2) - cos(pi.*x12d) - cos(pi*0);
+% 
+% figure(4), clf
+% plot(x12d, f2d)
+% xlabel('X1')
+% ylabel('Function Value')
 end

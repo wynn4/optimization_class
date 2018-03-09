@@ -2,38 +2,59 @@ clc
 clear
 close all
 
-N = 100;
-Ps = 0.8;
-Pf = 1e-3;
-delta = 0.5;
+% tuning params
+N = 50;
+Ps = 0.6;
+Pf = 1e-4;
+delta = 1.25;
+num_inner_loops = 3;
 
+global nfun;
+nfun = 0;
+
+% arrays to hold data
 dE_vals = [];
 f_vals = [];
-T_vals = [];
+% T_vals = [];
+T_vals = zeros(1,100000);
 x_states = zeros(100000,2);
 
 % initial x value
-x0 = [4, -4]';
+x0 = [4, 3]';
+x_states(1,:) = x0;
 
-f = get_f(x0);
-
+% compute starting and final temperatures
 Ts = -1/log(Ps);
 Tf = -1/log(Pf);
 
+% compute F
 F = (Tf/Ts)^(1/(N - 1));
 
+% initialization
+f = get_f(x0);
+f_vals(1) = f;
 count = 0;
 x = x0;
 T = Ts;
+incount = 0;
+% while we haven't reached Tf...
 while T > Tf
     
-    for i=1:10
+    for i=1:num_inner_loops
+        
+        incount = incount + 1;
+        T_vals(incount) = T;
+        
         % perturb the current x
-        xp = x + (rand(2,1) - [delta, delta]');
-        xp = saturate(xp);
-        if abs(xp(1)) > 5 || abs(xp(2)) > 5
-            disp('bad!!!')
+        if count > 0.8*N
+            xp = x + randn(2,1)*delta*0.1;  % if we're close to the end, make delta very small
+        else
+            xp = x + randn(2,1)*delta;  % the regular perturbation
         end
+        
+        
+        % saturate xp s.t. -5 < xp < 5
+        xp = saturate(xp);
         
         % compute f at the perturbed x
         fp = get_f(xp);
@@ -42,17 +63,24 @@ while T > Tf
         if fp < f
             % accept the perturbed design
             x = xp;
+            f = get_f(x);
             
             % compute dE and add to the dE_vals array
             dE = abs(fp - f);
             dE_vals(length(dE_vals) + 1) = dE;
         else
-            dE = fp - f;
-            dE_vals(length(dE_vals) + 1) = dE;
-            dE_avg = sum(dE_vals)/length(dE_vals);
+            % compute dE
+            dE = abs(fp - f);
             
-            % T = F * T;
+            % check to see if we have more than one value to average
+            if isempty(dE_vals)
+                dE_avg = dE;
+            else
+                % compute the average dE
+                dE_avg = sum(dE_vals)/length(dE_vals);
+            end
             
+            % compute probability of selecting a worse desing
             P = exp(-dE/(dE_avg*T));
             
             % see if random number is less than P
@@ -60,20 +88,30 @@ while T > Tf
             if rnum < P
                 % accept the perturbed design
                 x = xp;
+                f = get_f(x);
+                
+                % add the 'accepted' dE value to the array
+                dE_vals(length(dE_vals) + 1) = dE;
             else
-                % don't accept and remove the last dE from the running average
-                dE_vals = dE_vals(1:length(dE_vals)-1);
+                % don't accept and we keep the current design
+                x = x;
+                % f = get_f(x);
             end
             
         end
+        
     end
-    count = count + 1;
-    x_states(count,:) = x';
+    
+    % decrease the temperature
     T = F * T;
-    T_vals(length(T_vals) + 1) = T;
+    
+    % increment the outer loop counter
+    count = count + 1;
     
     % store function values from each loop
     f_vals(length(f_vals) + 1) = get_f(x);
+    % T_vals(length(T_vals) + 1) = T;
+    x_states(count + 1,:) = x';
     
 end
 
@@ -82,26 +120,39 @@ x_states = x_states(1:length(f_vals),:);
 
 figure(1), clf
 plot(iters, f_vals)
-xlabel('Iteration')
+xlabel('Iteration (outer loops)')
 ylabel('Function value, f')
+title('Function Value vs Iterations')
+
+iters = 1:incount;
+T_vals = T_vals(1:incount);
+figure(2), clf
+plot(iters, T_vals)
+xlabel('Iteration (inner loops)')
+ylabel('Temperature, T')
+title('Temperature vs Iterations')
 
 % call the contour plotter
 plot_contours(x_states);
-% axis([0 100 -1 12])
 
-% figure(2), clf
-% plot(iters, T_vals)
-% xlabel('Iteration')
-% ylabel('Temperature, T')
+
+
 
 x
+f = get_f(x)
 
+if abs(x(1)) < 0.1 && abs(x(2)) < 0.1
+    disp('Success')
+else
+    disp('Failed to converge to global optimum.')
+end
 
-fzero = get_f([0, 0]')
-
+nfun
 
 function fval = get_f(x)
+global nfun
 fval = 2 + 0.2*(x(1)^2) + 0.2*(x(2)^2) - cos(pi*x(1)) - cos(pi*x(2));
+nfun = nfun + 1;
 end
 
 function x_sat = saturate(x)
