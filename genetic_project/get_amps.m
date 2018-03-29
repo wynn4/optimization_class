@@ -1,7 +1,9 @@
 function amps = get_amps(thrust, design)
 
-% thrust is the required thrust in Newtons for each motor given the design
-% design is an array of the design variable integer representations
+% INPUTS:
+% thrust: Required thrust in Newtons for each motor given the design
+% design: Array of the design variables in integer representations
+
 % design = [motor_code, prop_blade_code, n_blades_code, n_cells_code,
 %           n_motors_code, bat_cap_code]
 
