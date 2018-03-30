@@ -16,6 +16,14 @@ mass_body = 5;  % mass of the central hub of the multirotor (kg)
 delta = 0.05;  % clearance between adjacent propellers (meters)
 mass_arm = 0.5;  % mass per meter of material used to construct arms (kg/m)
 
+% first check to see if we even have motor data for the given design
+check = get_amps(5, design);
+
+if check == -1
+    fitness = -1;
+    return
+end
+
 % Get the mass of the motor for the given design
 motor_code = design(1);
 
@@ -35,7 +43,8 @@ switch motor_code
         mass_motor = 0.360;
         
     otherwise
-        mass_motor = -1;
+        fitness = -1;
+        return
 end
 
 % Get the propeller diameter for the given design
@@ -63,7 +72,8 @@ switch prop_blade_code
         D = 15.5 * 0.0254;
         
     otherwise
-        D = -1;
+        fitness = -1;
+        return
 end
 
 % Get the number of battery cells for the given design
@@ -88,7 +98,8 @@ switch n_cells_code
         n_cells = 12;
         
     otherwise
-        n_cells = -1;
+        fitness = -1;
+        return
 end
 
 % Get the number of motors for the given design
@@ -107,7 +118,8 @@ switch n_motors_code
         n = 8;
         
     otherwise
-        n = -1;
+        fitness = -1;
+        return
 end
 
 % Get the battery capacity for the given design
@@ -115,27 +127,59 @@ bat_cap_code = design(6);
 
 switch bat_cap_code
     
+    % bat_cap = battery capacity in amp hours (Ah)
     case 1
-        bat_cap = 23000;
+        bat_cap = 23;
         
     case 2
-        bat_cap = 22000;
+        bat_cap = 22;
         
     case 3
-        bat_cap = 17000;
+        bat_cap = 17;
         
     case 4
-        bat_cap = 16000;
+        bat_cap = 16;
         
     otherwise
-        bat_cap = -1;
+        fitness = -1;
+        return
 end
 
-if bat_cap == 23000
-    cell_mass = 0.413; 
-elseif bat_cp == 22000
-    cell_mass = 0.
+if bat_cap == 23
+    cell_mass = 0.413;
+elseif bat_cap == 22
+    cell_mass = 0.422;
+elseif bat_cap == 17
+    cell_mass = 0.321;
+elseif bat_cap == 16
+    cell_mass = 0.310;
+else
+    fitness = -1;
+    return
 end
-m = compute_mass(n, D, delta, mass_body, mass_motor, mass_battery, mass_arm);
+
+% compute battery mass
+mass_battery = cell_mass * n_cells;
+
+% compute total mass of multirotor design
+mass_total = compute_mass(n, D, delta, mass_body, mass_motor, mass_battery, mass_arm);
+
+% compute hover thrust (equal to total_weight)
+thrust_total = mass_total * 9.81;
+
+% compute required thrust per motor
+thrust_motor = thrust_total / n;
+
+% compute current draw (Amps) per motor
+amps_motor = get_amps(thrust_motor, design);
+
+% compute total current draw
+amps = amps_motor * n;
+
+
+% finally, compute fitness or total flight time (hours)
+flight_time = bat_cap / amps;
+
+fitness = flight_time;
 
 end
