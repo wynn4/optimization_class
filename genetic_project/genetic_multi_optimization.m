@@ -47,26 +47,40 @@ n_genes = 6;         % Number of genes (design variables) per chromosome
 generation = zeros(N, n_genes);
 
 % Randomly select the first generation
-% TODO: make sure that all designs in 1st generation are valid designs
+feasible = zeros(N,1);
 for i = 1:N
-    for j = 1:n_genes
-        switch j
-            case 1
-                generation(i,j) = randi(4);
-            case 2
-                generation(i,j) = randi(6);
-            case 3
-                generation(i,j) = randi(2);
-            case 4
-                generation(i,j) = randi(5);
-            case 5
-                generation(i,j) = randi(3);
-            case 6
-                generation(i,j) = randi(4);
-            otherwise
-                disp("Error. Number of genes does not match number of cases.")
-                return
+    while ~feasible(i)
+        for j = 1:n_genes
+            switch j
+                case 1
+                    generation(i,j) = randi(4);
+                case 2
+                    generation(i,j) = randi(6);
+                case 3
+                    generation(i,j) = randi(2);
+                case 4
+                    generation(i,j) = randi(5);
+                case 5
+                    generation(i,j) = randi(3);
+                case 6
+                    generation(i,j) = randi(4);
+                otherwise
+                    disp("Error. Number of genes does not match number of cases.")
+                    return
+            end
+        end
+        
+        % Check to see if the current chromosome is feasible
+        check_feasible = get_amps(1, generation(i,:));
+        
+        if check_feasible == -1
+            feasible(i) = 0;
+            % disp("bad design")
+        else
+            feasible(i) = 1;
         end
         
     end
 end
+
+generation
