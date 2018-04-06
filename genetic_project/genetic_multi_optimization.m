@@ -3,10 +3,13 @@ clear
 close all
 
 % Algorithm Tuning Params
-N = 10;              % Generation size
-n_gen = 10;          % Number of generations
-p_crossover = 0.3;   % Probability that crossover occurs
-p_mutation = 0.01;   % Probability that mutation occurs
+N = 10;                 % Generation size
+n_gen = 10;             % Number of generations
+p_crossover = 0.3;      % Probability that crossover occurs
+p_mutation = 0.01;      % Probability that mutation occurs
+roulette_exponent = 2;  % Fitness pressure (larger exponents give designs
+                        % with greatest fitness a greater chance of being
+                        % selected as parents)
 
 % Other Params
 n_genes = 6;         % Number of genes (design variables) per chromosome
@@ -84,3 +87,22 @@ for i = 1:N
 end
 
 generation
+
+% Pick two designs from the current generation to become parents
+parents = roulette_selection(generation, roulette_exponent)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
