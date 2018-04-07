@@ -94,6 +94,13 @@ disp(generation)
 parents = roulette_selection(generation, roulette_exponent)
 
 
+% CROSSOVER STEP:
+children = blend_crossover(parents, p_crossover)
+children = point_crossover(parents, p_crossover)
+
+
+% MUTATION STEP:
+
 
 
 
