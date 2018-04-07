@@ -86,7 +86,9 @@ for i = 1:N
     end
 end
 
-generation
+disp(generation)
+
+% SELECTION STEP:
 
 % Pick two designs from the current generation to become parents
 parents = roulette_selection(generation, roulette_exponent)
