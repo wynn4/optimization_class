@@ -87,8 +87,9 @@ for i = 1:N
     end
 end
 
-disp(generation)
-avg_fit = compute_average_fitness(generation);
+first_generation = generation;
+disp(first_generation)
+avg_fit = compute_average_fitness(first_generation);
 
 for i=1:n_gen
     
@@ -110,7 +111,7 @@ for i=1:n_gen
         
         
         % CROSSOVER STEP:
-        % children = blend_crossover(parents, p_crossover)
+        % children = blend_crossover(parents, p_crossover);
         children = point_crossover(parents, p_crossover);
         
         
@@ -138,7 +139,14 @@ for i=1:n_gen
 end
 
 
+% Get the best design from the final generation and this is your optimal
+% design produced by the genetic algorithm:
 
+optimal_design = get_best_of_generation(generation)
+
+get_best_of_generation(first_generation)
+
+% display_design(optimal_design)
 
 
 
