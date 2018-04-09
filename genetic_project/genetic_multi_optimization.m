@@ -3,7 +3,7 @@ clear
 close all
 
 % Algorithm Tuning Params
-N = 100;                 % Generation size
+N = 50;                 % Generation size
 n_gen = 10;             % Number of generations
 p_crossover = 0.5;      % Probability that crossover occurs
 p_mutation = 0.10;      % Probability that mutation occurs
