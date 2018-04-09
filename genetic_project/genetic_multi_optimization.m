@@ -3,10 +3,10 @@ clear
 close all
 
 % Algorithm Tuning Params
-N = 10;                 % Generation size
+N = 100;                 % Generation size
 n_gen = 10;             % Number of generations
-p_crossover = 0.3;      % Probability that crossover occurs
-p_mutation = 0.01;      % Probability that mutation occurs
+p_crossover = 0.5;      % Probability that crossover occurs
+p_mutation = 0.10;      % Probability that mutation occurs
 roulette_exponent = 2;  % Fitness pressure (larger exponents give designs
                         % with greatest fitness a greater chance of being
                         % selected as parents)
@@ -143,6 +143,7 @@ end
 % design produced by the genetic algorithm:
 
 optimal_design = get_best_of_generation(generation)
+opt_fit = compute_fitness(optimal_design)
 
 get_best_of_generation(first_generation)
 
