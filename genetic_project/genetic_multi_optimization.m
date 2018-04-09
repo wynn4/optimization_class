@@ -10,6 +10,7 @@ p_mutation = 0.01;      % Probability that mutation occurs
 roulette_exponent = 2;  % Fitness pressure (larger exponents give designs
                         % with greatest fitness a greater chance of being
                         % selected as parents)
+beta = 1;               % dynamic mutation param
 
 % Other Params
 n_genes = 6;         % Number of genes (design variables) per chromosome
@@ -87,19 +88,54 @@ for i = 1:N
 end
 
 disp(generation)
+avg_fit = compute_average_fitness(generation);
 
-% SELECTION STEP:
-
-% Pick two designs from the current generation to become parents
-parents = roulette_selection(generation, roulette_exponent)
-
-
-% CROSSOVER STEP:
-children = blend_crossover(parents, p_crossover)
-children = point_crossover(parents, p_crossover)
-
-
-% MUTATION STEP:
+for i=1:n_gen
+    
+    % Allocate memory for the new generation
+    new_generation = zeros(N, n_genes);
+    
+    spots_remaining = N;
+    count = 0;
+    
+    % while there's room to add at least two more children to the new
+    % generation...
+    while spots_remaining >= 2
+        
+        count = count + 1;
+        
+        % SELECTION STEP:
+        % Pick two designs from the current generation to become parents
+        parents = roulette_selection(generation, roulette_exponent);
+        
+        
+        % CROSSOVER STEP:
+        % children = blend_crossover(parents, p_crossover)
+        children = point_crossover(parents, p_crossover);
+        
+        
+        % MUTATION STEP:
+        for k=1:2
+            children(k,:) = dynamic_mutation(children(k,:), p_mutation, i, n_gen, beta);
+        end
+        
+        % add the children to the new generation
+        new_generation(2*count-1,:) = children(1,:);
+        new_generation(2*count,:) = children(2,:);
+        
+        spots_remaining = spots_remaining - 2;
+        
+    end
+    
+    % The new generation is full, now we perform elitism to ensure that the
+    % new generation has superior fitness
+    
+    % ELITISM STEP:
+    % Take the most fit chromosomes from the old generation and the new
+    % generation to represent the next generation
+    generation = elitism(generation, new_generation);
+    avg_fit = compute_average_fitness(generation)
+end
 
 
 

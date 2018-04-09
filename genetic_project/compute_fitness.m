@@ -20,7 +20,7 @@ mass_arm = 0.5;  % mass per meter of material used to construct arms (kg/m)
 check = get_amps(5, design);
 
 if check == -1
-    fitness = -1;
+    fitness = 0;
     return
 end
 
@@ -43,7 +43,7 @@ switch motor_code
         mass_motor = 0.360;
         
     otherwise
-        fitness = -1;
+        fitness = 0;
         return
 end
 
@@ -72,7 +72,7 @@ switch prop_blade_code
         D = 15.5 * 0.0254;
         
     otherwise
-        fitness = -1;
+        fitness = 0;
         return
 end
 
@@ -98,7 +98,7 @@ switch n_cells_code
         n_cells = 12;
         
     otherwise
-        fitness = -1;
+        fitness = 0;
         return
 end
 
@@ -118,7 +118,7 @@ switch n_motors_code
         n = 8;
         
     otherwise
-        fitness = -1;
+        fitness = 0;
         return
 end
 
@@ -141,7 +141,7 @@ switch bat_cap_code
         bat_cap = 16;
         
     otherwise
-        fitness = -1;
+        fitness = 0;
         return
 end
 
@@ -154,7 +154,7 @@ elseif bat_cap == 17
 elseif bat_cap == 16
     cell_mass = 0.310;
 else
-    fitness = -1;
+    fitness = 0;
     return
 end
 
