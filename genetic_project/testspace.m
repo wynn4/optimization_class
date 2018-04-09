@@ -20,15 +20,52 @@ close all
 % 
 % plot(thr_data, amp_predict)
 % legend('data', 'predicted')
-global loops
+% global loops
+% 
+% for i = 1:5
+%     if i == 4
+%         i = 1;
+%     end
+%     loops = loops + 1
+%     
+%     if loops > 50
+%         break
+%     end
+% end
+all_designs = zeros(2880,6);
+all_fitnesses = zeros(2880,1);
 
-for i = 1:5
-    if i == 4
-        i = 1;
-    end
-    loops = loops + 1
-    
-    if loops > 50
-        break
+count = 0;
+
+for i=1:4
+    for j=1:6
+        for k=1:2
+            for l=1:5
+                for m=1:3
+                    for n=1:4
+                        % increment the counter
+                        count = count + 1;
+                        
+                        % fill out the design
+                        design = [i, j, k, l, m, n];
+                        
+                        % add design to our giant matrix
+                        all_designs(count,:) = design;
+                        
+                        % add the fitness to our big fitness vector
+                        all_fitnesses(count) = compute_fitness(design);
+                        
+                    end
+                end
+            end
+        end
     end
 end
+
+% sort all_fitnesses in descending order and get the index
+[sorted, index] = sort(all_fitnesses, 'descend');
+
+bestIndex = index(1);
+
+best_design = all_designs(bestIndex,:)
+fitness = compute_fitness(best_design)
