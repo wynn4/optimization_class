@@ -114,8 +114,8 @@ for i=1:n_gen
         
         
         % CROSSOVER STEP:
-        % children = blend_crossover(parents, p_crossover);
-        children = point_crossover(parents, p_crossover);
+        children = blend_crossover(parents, p_crossover);
+        %children = point_crossover(parents, p_crossover);
         
         
         % MUTATION STEP:
@@ -176,21 +176,3 @@ plot(generations, avg_fitness)
 xlabel('Generation Number')
 ylabel('Average Fitness')
 title('Fitness vs Generation')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

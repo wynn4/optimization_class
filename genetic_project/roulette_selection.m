@@ -63,13 +63,3 @@ end
 % fitnesses
 % widths
 end
-
-
-
-
-
-
-
-
-
-
