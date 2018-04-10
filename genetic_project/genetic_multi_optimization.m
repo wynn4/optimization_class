@@ -4,7 +4,7 @@ close all
 
 % Algorithm Tuning Params
 N = 50;                 % Generation size
-n_gen = 10;             % Number of generations
+n_gen = 20;             % Number of generations
 p_crossover = 0.5;      % Probability that crossover occurs
 p_mutation = 0.10;      % Probability that mutation occurs
 roulette_exponent = 2;  % Fitness pressure (larger exponents give designs
@@ -49,6 +49,7 @@ n_genes = 6;         % Number of genes (design variables) per chromosome
 
 % Memory Allocation
 generation = zeros(N, n_genes);
+avg_fitness = [];
 
 % Randomly select the first generation
 feasible = zeros(N,1);
@@ -88,8 +89,10 @@ for i = 1:N
 end
 
 first_generation = generation;
-disp(first_generation)
+% disp(first_generation)
 avg_fit = compute_average_fitness(first_generation);
+avg_fitness = [avg_fitness; avg_fit];
+
 
 for i=1:n_gen
     
@@ -136,18 +139,49 @@ for i=1:n_gen
     % generation to represent the next generation
     generation = elitism(generation, new_generation);
     avg_fit = compute_average_fitness(generation)
+    avg_fitness = [avg_fitness; avg_fit];
 end
 
 
 % Get the best design from the final generation and this is your optimal
 % design produced by the genetic algorithm:
 
-optimal_design = get_best_of_generation(generation)
-opt_fit = compute_fitness(optimal_design)
+optimal_design = get_best_of_generation(generation);
+opt_fit = compute_fitness(optimal_design);
 
-get_best_of_generation(first_generation)
 
-% display_design(optimal_design)
+% This is the design that most-closely represents LLNL's current copter
+% Flight time is ~ 25 minutes
+starting_design = [4, 5, 1, 2, 3, 1];
+fit0 = compute_fitness(starting_design);
+
+diff = opt_fit - fit0;
+percent_improvement = (diff/fit0) * 100;
+
+disp('------------------------------------------------>')
+disp("Genetic Algorithm Finished.")
+optimal_design
+
+minutes = opt_fit * 60;
+disp("Total flight time (minutes): " + num2str(minutes))
+disp(newline)
+disp("Objective increase from initial design: " + num2str(percent_improvement) + "%")
+disp(newline)
+parse_and_display_design(optimal_design);
+
+% plots
+figure(1), clf
+generations = 1:n_gen + 1;
+plot(generations, avg_fitness)
+xlabel('Generation Number')
+ylabel('Average Fitness')
+title('Fitness vs Generation')
+
+
+
+
+
+
 
 
 

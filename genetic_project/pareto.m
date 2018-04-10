@@ -76,12 +76,12 @@ for i = 1:rows
 end
 
 plot(f1, f2, 'r*')
-xlabel('1 / Flight Time')
-ylabel('Propeller Disc Area')
+xlabel('1 / Flight Time (1/hr)')
+ylabel('Propeller Disc Area (m^2)')
 hold on
-plot(f1_pareto, f2_pareto, 'b*')
-plot(f1_pareto, f2_pareto, 'b')
-title('Design Space and Pareto Front (blue)')
+plot(f1_pareto, f2_pareto, 'b-*')
+% plot(f1_pareto, f2_pareto, 'b')
+title('Objective Space and Pareto Front')
 
 % select pareto_design(3,:) as the 'best design'
 pareto_row = 3;
@@ -126,5 +126,6 @@ s = strcat(s6, area, s7);
 disp(s)
 
 
-plot(f1_pareto(pareto_row), f2_pareto(pareto_row), 'b*', 'MarkerSize', 12, 'LineWidth', 3)
+plot(f1_pareto(pareto_row), f2_pareto(pareto_row), 'bx', 'MarkerSize', 12, 'LineWidth', 2)
+legend('all feasible designs', 'pareto designs', '"best" design')
 
